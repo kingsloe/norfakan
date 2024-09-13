@@ -1,0 +1,66 @@
+import axios from 'axios';
+import { ENDPOINTS } from '../constants/urls';
+import { retrieveToken, saveToken, deleteToken } from './auth';
+import { router } from 'expo-router';
+
+const axiosInstance = axios.create({
+    baseURL: ENDPOINTS.getTokenUrl,
+});
+
+// Request interceptor to add Authorization header
+axiosInstance.interceptors.request.use(async (config) => {
+    const accessToken = await retrieveToken('accessToken');
+    if (accessToken) {
+        config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+    return config;
+}, error => Promise.reject(error));
+
+// Response interceptor to handle token refresh
+axiosInstance.interceptors.response.use(
+    (response) => response, 
+    async (error) => {
+        const originalRequest = error.config;
+
+        if (error.response && error.response.status === 401 && !originalRequest._retry) {
+            originalRequest._retry = true;
+
+            try {
+                const refreshToken = await retrieveToken('refreshToken');
+                if (!refreshToken) {
+                    throw new Error('No refresh token available');
+                }
+
+                // Request new tokens
+                const response = await axios.post(ENDPOINTS.refreshTokenUrl, { refresh: refreshToken });
+
+                const newAccessToken = response.data.access;
+                const newRefreshToken = response.data.refresh;
+
+                // Save new tokens
+                await saveToken('accessToken', newAccessToken);
+                await saveToken('refreshToken', newRefreshToken);
+
+                // Update the Authorization header for the original request
+                originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+
+                // Retry the original request with the new access token
+                return axiosInstance(originalRequest);
+            } catch (error) {
+                console.error('Token refresh failed:', error);
+
+                await deleteToken('accessToken');
+                await deleteToken('refreshToken');
+                setIsLoggedIn(false);
+                router.replace('/login');
+
+
+                return Promise.reject(error);
+            }
+        }
+
+        return Promise.reject(error);
+    }
+);
+
+export default axiosInstance;

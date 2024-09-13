@@ -1,0 +1,33 @@
+# Byte-compiled Python files
+__pycache__/
+*.pyc
+
+# Local development settings
+*.env
+fun-man.sublime-workspace
+
+# Database
+db.sqlite3
+
+# Static and media files (if using the default settings)
+/static/
+/media/
+/staticfiles/
+
+# Secret keys and sensitive information
+*.secret
+*.key
+*key.py
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.swp
+
+# Ignore all migrations
+**/migrations/
+
+# Ignore the virtual environment (if you're using a virtual environment)
+venv/
