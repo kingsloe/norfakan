@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ENDPOINTS } from '../constants/urls';
-import { retrieveToken, saveToken, deleteToken } from './auth';
+import { retrieveToken, storeToken, deleteToken } from './auth';
 import { router } from 'expo-router';
 
 const axiosInstance = axios.create({
@@ -38,8 +38,8 @@ axiosInstance.interceptors.response.use(
                 const newRefreshToken = response.data.refresh;
 
                 // Save new tokens
-                await saveToken('accessToken', newAccessToken);
-                await saveToken('refreshToken', newRefreshToken);
+                await storeToken('accessToken', newAccessToken);
+                await storeToken('refreshToken', newRefreshToken);
 
                 // Update the Authorization header for the original request
                 originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;

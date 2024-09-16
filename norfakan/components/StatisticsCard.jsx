@@ -5,12 +5,11 @@ import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
-import axiosInstance from '../lib/axiosInstance';
-
 import { ENDPOINTS } from '../constants/urls';
 import { mainButtonColor } from '../constants/colors';
 
 import fetchDataFromApi from '../lib/api';
+import { storeData, retrieveData } from '../lib/secureStoreData';
 
 const getFamiliyMembersList = () => fetchDataFromApi(
     ENDPOINTS.getFamilyMembersListUrl, 
@@ -34,11 +33,10 @@ const getIconForKey = (key) => {
         committee_members: <MaterialIcons name="family-restroom" size={36} color="white" />,
         deceased_family_members: <MaterialCommunityIcons name="emoticon-dead-outline" size={36} color="white" />,
     };
-    return iconMap[key] || 'default-icon'; // Fallback to a default icon
+    return iconMap[key] || <MaterialIcons name="family-restroom" size={36} color="white" />; // Fallback to a default icon
 };
 
 const Item = ({title, figure, icon}) => {
-
     return (
     <View style={styles.container}>
         <Text style={{fontSize: 20, fontWeight: '500'}}>{title}</Text>
@@ -47,36 +45,50 @@ const Item = ({title, figure, icon}) => {
             {icon}
         </View>
     </View>
-)}
+)};
 
 const StatisticsCard = () => {
     const [response, setResponse] = useState(null);
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [familyMembersResult, totalFuneralFeeResult] = await Promise.all([getFamiliyMembersList(),
+                // Fetch data concurrently
+                const [familyMembersResult, totalFuneralFeeResult] = await Promise.all([
+                    getFamiliyMembersList(),
                     getAmountTaken()
                     ])
-                const familyMembersDataArray = Object.keys(familyMembersResult).map((key, index) => ({
+
+                await storeData('familyMembersResult', familyMembersResult);
+                const retrievedFamilyMembersResult = await retrieveData('familyMembersResult');
+
+                // Process the data
+                const familyMembersDataArray = Object.keys(retrievedFamilyMembersResult).map((key, index) => ({
                     id: String(index + 1),
                     title: formatTitle(key),
                     figure: familyMembersResult[key],
                     icon: getIconForKey(key)
                 }));
+
+                await storeData('totalFuneralFeeResult', totalFuneralFeeResult);
+                const retrievedTotalFuneralFeeResult = await retrieveData('totalFuneralFeeResult');
+
                 const totalFuneralFeeData = {
                     id: String(familyMembersDataArray.length + 1),
                     title: 'Total Funeral Fee',
-                    figure: totalFuneralFeeResult,
+                    figure: retrievedTotalFuneralFeeResult,
                     icon: <FontAwesome6 name="cedi-sign" size={36} color="white" />
                 };
+                
                 const combinedDataArray = [...familyMembersDataArray, totalFuneralFeeData];
                 setResponse(combinedDataArray)
             }catch (error){
-            console.log('Error rendering data: ', error)
+            console.log('Error rendering data: ', error);
             }
         };
         fetchData(); 
     }, []);
+
     return (
         <FlatList 
             data={response}

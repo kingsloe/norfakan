@@ -26,8 +26,8 @@ const handleLogin  = async (username, password) => {
         },{ 
             timeout: 10000,
         });
-        saveToken('accessToken', response.data.access);
-        saveToken('refreshToken', response.data.refresh);
+        await storeToken('accessToken', response.data.access);
+        await storeToken('refreshToken', response.data.refresh);
         return response.data
     } catch (error) {
         Alert.alert('Login Failed', 
@@ -38,11 +38,12 @@ const handleLogin  = async (username, password) => {
 }
 
 
-const saveToken = async (key, value) => {
+const storeToken = async (key, value) => {
     try {
         await SecureStore.setItemAsync(key, value)
+        console.log(`Successfuly saved ${key}`)
     } catch (error) {
-        console.log('Error saving token to secure store')
+        console.log(`Error storing ${key}: `, error)
         throw error;
     }
 }
@@ -50,10 +51,10 @@ const saveToken = async (key, value) => {
 
 const retrieveToken = async (key) => {
     try {
-        let retrievedToken = await SecureStore.getItemAsync(key);
-        return retrievedToken;
+        let result = await SecureStore.getItemAsync(key);
+        return result;
     } catch (error) {
-        console.log('Error retrieving token from secure store')
+        console.log(`Error retrieving ${ key }: `, error)
         throw error;
     }
 }
@@ -67,4 +68,4 @@ const deleteToken = async (key) => {
     }
 }
 
-export { handleLogin, saveToken, retrieveToken, deleteToken };
+export { handleLogin, storeToken, retrieveToken, deleteToken };

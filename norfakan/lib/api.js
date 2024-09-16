@@ -1,6 +1,7 @@
 import { ENDPOINTS } from '../constants/urls';
 import axiosInstance from '../lib/axiosInstance';
 
+
 const fetchDataFromApi = async(url) => {
 	try {
 		const response = await axiosInstance.get(url);
@@ -10,5 +11,6 @@ const fetchDataFromApi = async(url) => {
 		return null;
 	}
 }
+
 
 export default fetchDataFromApi;
