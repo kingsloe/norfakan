@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { ENDPOINTS } from '../constants/urls';
-import { retrieveToken, storeToken, deleteToken } from './auth';
+import { retrieveToken, storeToken, deleteData } from './auth';
 import { router } from 'expo-router';
 
 const axiosInstance = axios.create({
@@ -49,8 +49,8 @@ axiosInstance.interceptors.response.use(
             } catch (error) {
                 console.error('Token refresh failed:', error);
 
-                await deleteToken('accessToken');
-                await deleteToken('refreshToken');
+                await deleteData('accessToken');
+                await deleteData('refreshToken');
                 setIsLoggedIn(false);
                 router.replace('/login');
 

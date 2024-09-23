@@ -26,4 +26,4 @@ const retrieveData = async (key) => {
 	}
 };
 
-export { storeData, retrieveData }
+export { storeData, retrieveData };

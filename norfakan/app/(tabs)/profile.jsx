@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, Dimensions } from 'react-native';
 
 import { useAuth } from '../../context/AuthProvider';
 import { CustomButton, Avatar } from '../../components';
+import { deleteData } from '../../lib/auth';
 
 import * as SecureStore from 'expo-secure-store';
 import { router } from 'expo-router';
@@ -15,8 +16,11 @@ const Profile = () => {
     const {setIsLoggedIn } = useAuth();
     const handleLogout = async () => {
         try{
-          await SecureStore.deleteItemAsync('accessToken');
-          await SecureStore.deleteItemAsync('refreshToken');
+          await deleteData('accessToken');
+          await deleteData('refreshToken');
+          await deleteData('familyMembersResult');
+          await deleteData('totalFuneralFeeResult');
+          console.log('Successfully loggedout')
           setIsLoggedIn(false);
           router.replace('/')
         } catch (error) {

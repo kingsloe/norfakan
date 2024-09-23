@@ -4,6 +4,8 @@ import { Text, View, StyleSheet, FlatList } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import NetInfo from '@react-native-community/netinfo';
+
 
 import { ENDPOINTS } from '../constants/urls';
 import { mainButtonColor } from '../constants/colors';
@@ -32,6 +34,8 @@ const getIconForKey = (key) => {
         alive_family_members: <MaterialIcons name="family-restroom" size={36} color="white" />,
         committee_members: <MaterialIcons name="family-restroom" size={36} color="white" />,
         deceased_family_members: <MaterialCommunityIcons name="emoticon-dead-outline" size={36} color="white" />,
+        total_funeral_fee: <FontAwesome6 name="cedi-sign" size={36} color="white" />,
+
     };
     return iconMap[key] || <MaterialIcons name="family-restroom" size={36} color="white" />; // Fallback to a default icon
 };
@@ -49,41 +53,51 @@ const Item = ({title, figure, icon}) => {
 
 const StatisticsCard = () => {
     const [response, setResponse] = useState(null);
+    const [isConnected, setIsConnected] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Fetch data concurrently
-                const [familyMembersResult, totalFuneralFeeResult] = await Promise.all([
-                    getFamiliyMembersList(),
-                    getAmountTaken()
-                    ])
+                let retrievedFamilyMembersResult = await retrieveData('familyMembersResult');
+                let retrievedTotalFuneralFeeResult = await retrieveData('totalFuneralFeeResult');
 
-                await storeData('familyMembersResult', familyMembersResult);
-                const retrievedFamilyMembersResult = await retrieveData('familyMembersResult');
+                if (!retrievedFamilyMembersResult || !retrievedTotalFuneralFeeResult) {
+                    const state = await NetInfo.fetch();
+                    if (state.isConnected && state.isInternetReachable) {
+                        const [familyMembersResult, totalFuneralFeeResult] = await Promise.all([
+                            getFamiliyMembersList(),
+                            getAmountTaken()
+                        ]);
+                        await storeData('familyMembersResult', familyMembersResult);
+                        await storeData('totalFuneralFeeResult', totalFuneralFeeResult);
 
-                // Process the data
+                        retrievedFamilyMembersResult = await retrieveData('familyMembersResult');
+                        retrievedTotalFuneralFeeResult = await retrieveData('totalFuneralFeeResult');
+
+                    } else {
+                        setResponse(null);
+                        return;
+                    }
+                }
                 const familyMembersDataArray = Object.keys(retrievedFamilyMembersResult).map((key, index) => ({
                     id: String(index + 1),
                     title: formatTitle(key),
-                    figure: familyMembersResult[key],
+                    figure: retrievedFamilyMembersResult[key],
                     icon: getIconForKey(key)
                 }));
-
-                await storeData('totalFuneralFeeResult', totalFuneralFeeResult);
-                const retrievedTotalFuneralFeeResult = await retrieveData('totalFuneralFeeResult');
 
                 const totalFuneralFeeData = {
                     id: String(familyMembersDataArray.length + 1),
                     title: 'Total Funeral Fee',
                     figure: retrievedTotalFuneralFeeResult,
-                    icon: <FontAwesome6 name="cedi-sign" size={36} color="white" />
+                    icon: getIconForKey('total_funeral_fee')
                 };
-                
                 const combinedDataArray = [...familyMembersDataArray, totalFuneralFeeData];
                 setResponse(combinedDataArray)
+                   
             }catch (error){
-            console.log('Error rendering data: ', error);
+                console.log('Error rendering data: ', error);
+                throw error;
             }
         };
         fetchData(); 

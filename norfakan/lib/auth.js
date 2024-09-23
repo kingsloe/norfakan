@@ -59,7 +59,7 @@ const retrieveToken = async (key) => {
     }
 }
 
-const deleteToken = async (key) => {
+const deleteData = async (key) => {
     try {
         await SecureStore.deleteItemAsync(key)
     } catch (error) {
@@ -68,4 +68,4 @@ const deleteToken = async (key) => {
     }
 }
 
-export { handleLogin, storeToken, retrieveToken, deleteToken };
+export { handleLogin, storeToken, retrieveToken, deleteData };
