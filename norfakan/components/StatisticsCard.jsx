@@ -15,13 +15,15 @@ import { storeData, retrieveData } from '../lib/secureStoreData';
 
 const getFamiliyMembersList = () => fetchDataFromApi(
     ENDPOINTS.getFamilyMembersListUrl, 
-    'Error fetching family members list: '
     );
 
 const getAmountTaken = () => fetchDataFromApi(
     ENDPOINTS.getTotalFuneralFeeUrl, 
-    'Error fetching total amount taken: '
     );
+
+const getSubFamilyList = () => fetchDataFromApi(
+    ENDPOINTS.getSubFamilyListUrl,
+    )
 
 const formatTitle = (key) => {
     return key
@@ -94,6 +96,8 @@ const StatisticsCard = () => {
                 };
                 const combinedDataArray = [...familyMembersDataArray, totalFuneralFeeData];
                 setResponse(combinedDataArray)
+                const some = await getSubFamilyList()
+                await console.log(some)
                    
             }catch (error){
                 console.log('Error rendering data: ', error);

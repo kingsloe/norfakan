@@ -51,11 +51,9 @@ axiosInstance.interceptors.response.use(
 
                 await deleteData('accessToken');
                 await deleteData('refreshToken');
-                setIsLoggedIn(false);
-                router.replace('/login');
+                // setIsLoggedIn(false);
+                return router.replace('/sign-in');
 
-
-                return Promise.reject(error);
             }
         }
 
