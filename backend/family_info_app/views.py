@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 
 # Models import
-from .models import FamilyMember
+from .models import FamilyMember, SubFamily
 
 # Serializers import
 from .serializers import FamilyMemberSerializer
@@ -42,3 +42,13 @@ class FamilyMemberViewSet(viewsets.ModelViewSet):
         }
 
         return Response(data)
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    def get_creator_sub_families(self, request):
+        creator = request.user
+        sub_families = SubFamily.objects.filter(creator=creator)
+        sub_families_data = [{'id': sub_family.id, 'sub_family_name': sub_family.sub_family_name} for sub_family in sub_families]
+
+        return Response(sub_families_data)
+
+        
