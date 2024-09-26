@@ -3,9 +3,9 @@ import { StyleSheet, Text, View, Image, ScrollView, Dimensions} from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context'
 import Spinner from 'react-native-loading-spinner-overlay';
 
-import { Link, Redirect, router } from 'expo-router'
+import { Link, Redirect, router } from 'expo-router';
 
-import { handleLogin } from '../../lib/auth'
+import { handleLogin } from '../../lib/auth';
 import { images } from '../../constants';
 import { CustomButton, FormField } from '../../components';
 import { useAuth } from '../../context/AuthProvider';
