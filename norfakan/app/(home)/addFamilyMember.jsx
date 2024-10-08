@@ -1,13 +1,21 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Text, ScrollView, View, StyleSheet, Dimensions } from 'react-native';
 import { CustomButton, FormField, PickerField } from '../../components';
+import fetchDataFromApi from '../../lib/api';
+import { ENDPOINTS } from '../../constants/urls';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import {Picker} from '@react-native-picker/picker';
 
 const { height } = Dimensions.get('window');
 
+const getSubFamilyList = () => fetchDataFromApi(
+    ENDPOINTS.getSubFamilyListUrl,
+    )
+
 const AddFamilyMember = () => {
+    const [selectedPosition, setSelectedPosition] = useState(null);
+    const [items, setItems] = useState([]);
 	const [form, setForm] = useState({
 		firstName: '',
 		lastName: '',
@@ -19,14 +27,19 @@ const AddFamilyMember = () => {
 		gender: 'male',
 		contact: ''
 	})
-	const [selectedPosition, setSelectedPosition] = useState('');
-	const items = [
-    { label: "Head of Super Family", value: "head_of_super_family" },
-    { label: "Head of Sub Family", value: "head_of_sub_family" },
-    { label: "Head of Committee", value: "head_of_committee" },
-    { label: "Committee", value: "committee" },
-    { label: "Member", value: "member" },
-];
+    useEffect (() => {
+        const fetchSubFamilyList = async () => {
+            const results= await getSubFamilyList();
+            const transformedItems = results.map(item => ({
+                label: item.sub_family_name,
+                value: item.id
+            }));
+            setItems(transformedItems);
+        };
+        fetchSubFamilyList();
+    }, []);
+	
+
 	return (
 		<SafeAreaView>
 			<ScrollView>
@@ -60,10 +73,35 @@ const AddFamilyMember = () => {
                 handleChangeText={(e) => setForm({ ...form, password: e})}
             />
             <PickerField 
+                title="Sub Family"
+                value={selectedPosition}
+                items={items}
+                handleChangeText={(value) => setSelectedPosition(value)}
+            />
+            <PickerField 
             	title="Position"
 			    value={selectedPosition}
 			    items={items}
 			    handleChangeText={(value) => setSelectedPosition(value)}
+            />
+            <PickerField 
+            	title="Status"
+			    value={selectedPosition}
+			    items={items}
+			    handleChangeText={(value) => setSelectedPosition(value)}
+            />
+            <PickerField 
+            	title="Gender"
+			    value={selectedPosition}
+			    items={items}
+			    handleChangeText={(value) => setSelectedPosition(value)}
+            />
+            <FormField 
+                title='Contact'
+                otherStyles={{marginTop: 20}}
+                value= {form.password}
+                placeholder='Enter Password'
+                handleChangeText={(e) => setForm({ ...form, password: e})}
             />
 			</View>
 			</ScrollView>
@@ -79,7 +117,8 @@ const styles = StyleSheet.create({
         backgroundColor: '#F4FDFF',
         justifyContent: 'center',
         paddingHorizontal: 16,
-        minHeight: height * 0.83
+        minHeight: height * 0.83,
+        marginBottom: 10
     },
     picker: {
     	borderWidth: 2,

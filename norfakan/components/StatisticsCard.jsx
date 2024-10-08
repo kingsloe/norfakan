@@ -21,10 +21,6 @@ const getAmountTaken = () => fetchDataFromApi(
     ENDPOINTS.getTotalFuneralFeeUrl, 
     );
 
-const getSubFamilyList = () => fetchDataFromApi(
-    ENDPOINTS.getSubFamilyListUrl,
-    )
-
 const formatTitle = (key) => {
     return key
         .replace(/_/g, ' ')
@@ -96,8 +92,6 @@ const StatisticsCard = () => {
                 };
                 const combinedDataArray = [...familyMembersDataArray, totalFuneralFeeData];
                 setResponse(combinedDataArray)
-                const some = await getSubFamilyList()
-                await console.log(some)
                    
             }catch (error){
                 console.log('Error rendering data: ', error);

@@ -6,6 +6,7 @@ import {Picker} from '@react-native-picker/picker';
 const { height } = Dimensions.get('window');
 
 const PickerField = ({title, value, items, handleChangeText, ...props}) => {
+
 	return (
 		<View style={styles.container}>
 		    <Text style={{fontSize: 18}}>{title}</Text>
@@ -13,8 +14,8 @@ const PickerField = ({title, value, items, handleChangeText, ...props}) => {
 			    <Picker
 			    	selectedValue={value}
 			    	onValueChange={handleChangeText}>
-			    	{items.map((item, index) => (
-                        <Picker.Item key={index} label={item.label} value={item.value} />
+			    	{items.map((item) => (
+                        <Picker.Item key={item.value} label={item.label} value={item.value} />
                     ))}
 			    </Picker>
 		    </View>
@@ -26,7 +27,7 @@ export default PickerField;
 
 const styles = StyleSheet.create({
     container: {
-    	marginVertical: 28,
+    	marginTop: 28,
     },
     picker: {
     	borderWidth: 2,
