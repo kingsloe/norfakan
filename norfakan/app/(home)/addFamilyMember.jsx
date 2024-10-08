@@ -1,21 +1,36 @@
 import { useState, useEffect } from 'react';
 import { Text, ScrollView, View, StyleSheet, Dimensions } from 'react-native';
 import { CustomButton, FormField, PickerField } from '../../components';
-import fetchDataFromApi from '../../lib/api';
 import { ENDPOINTS } from '../../constants/urls';
 import { SafeAreaView } from 'react-native-safe-area-context';
-
 import {Picker} from '@react-native-picker/picker';
+import fetchDataFromApi from '../../lib/api';
 
 const { height } = Dimensions.get('window');
 
-const getSubFamilyList = () => fetchDataFromApi(
-    ENDPOINTS.getSubFamilyListUrl,
-    )
+const getSubFamilyList = () => fetchDataFromApi(ENDPOINTS.getSubFamilyListUrl)
+const getPositionList = () => fetchDataFromApi(ENDPOINTS.getPositionListUrl)
+
+const STATUS = [
+    { value: 'alive', label: 'Alive' },
+    { value: 'dead', label: 'Dead' },
+];
+
+const GENDER = [
+    { value: 'male', label: 'Male' },
+    { value: 'female', label: 'Female' },
+];
 
 const AddFamilyMember = () => {
+    const [selectedSubFamily, setSelectedSubFamily] = useState(null);
     const [selectedPosition, setSelectedPosition] = useState(null);
-    const [items, setItems] = useState([]);
+    const [selectedStatus, setSelectedStatus] = useState(null);
+    const [selectedGender, setSelectedGender] = useState(null);
+
+    const [subFamilyList, setSubFamilyList] = useState([]);
+    const [positionList, setPositionList] = useState([]);
+    const [statusList, setStatusList] = useState([]);
+    const [genderList, setGenderList] = useState([]);
 	const [form, setForm] = useState({
 		firstName: '',
 		lastName: '',
@@ -29,13 +44,25 @@ const AddFamilyMember = () => {
 	})
     useEffect (() => {
         const fetchSubFamilyList = async () => {
-            const results= await getSubFamilyList();
-            const transformedItems = results.map(item => ({
-                label: item.sub_family_name,
-                value: item.id
-            }));
-            setItems(transformedItems);
+            try {
+                const fetchedSubFamilyList = await getSubFamilyList();
+                setSubFamilyList(fetchedSubFamilyList);
+            } catch (error){
+                console.log('Error fetching Sub Family List: ', error);
+            }
         };
+
+        const fetchPositionList = async () => {
+            try {
+                const fetchedPositionList = await getPositionList();
+                setPositionList(fetchedPositionList)
+            } catch (error) {
+                console.log('Error fetching Position List: ', error)
+            }
+        };
+        setStatusList(STATUS)
+        setGenderList(GENDER)
+        fetchPositionList();
         fetchSubFamilyList();
     }, []);
 	
@@ -74,34 +101,34 @@ const AddFamilyMember = () => {
             />
             <PickerField 
                 title="Sub Family"
-                value={selectedPosition}
-                items={items}
-                handleChangeText={(value) => setSelectedPosition(value)}
+                value={selectedSubFamily}
+                items={subFamilyList}
+                handleChangeText={(value) => setSelectedSubFamily(value)}
             />
             <PickerField 
             	title="Position"
 			    value={selectedPosition}
-			    items={items}
+			    items={positionList}
 			    handleChangeText={(value) => setSelectedPosition(value)}
             />
             <PickerField 
             	title="Status"
-			    value={selectedPosition}
-			    items={items}
-			    handleChangeText={(value) => setSelectedPosition(value)}
+                value={selectedStatus}
+                items={statusList}
+                handleChangeText={(value) => setSelectedStatus(value)}
             />
             <PickerField 
             	title="Gender"
-			    value={selectedPosition}
-			    items={items}
-			    handleChangeText={(value) => setSelectedPosition(value)}
+			    value={selectedGender}
+			    items={genderList}
+			    handleChangeText={(value) => setSelectedGender(value)}
             />
             <FormField 
                 title='Contact'
                 otherStyles={{marginTop: 20}}
-                value= {form.password}
-                placeholder='Enter Password'
-                handleChangeText={(e) => setForm({ ...form, password: e})}
+                value= {form.contact}
+                placeholder='Enter Contact'
+                handleChangeText={(e) => setForm({ ...form, contact: e})}
             />
 			</View>
 			</ScrollView>

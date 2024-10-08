@@ -29,6 +29,7 @@ axiosInstance.interceptors.response.use(
                 const refreshToken = await retrieveToken('refreshToken');
                 if (!refreshToken) {
                     throw new Error('No refresh token available');
+                    return router.replace('/sign-in')
                 }
 
                 // Request new tokens

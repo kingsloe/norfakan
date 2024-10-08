@@ -47,8 +47,14 @@ class FamilyMemberViewSet(viewsets.ModelViewSet):
     def get_creator_sub_families(self, request):
         creator = request.user
         sub_families = SubFamily.objects.filter(creator=creator)
-        sub_families_data = [{'id': sub_family.id, 'sub_family_name': sub_family.sub_family_name} for sub_family in sub_families]
+        sub_families_list = [{'value': sub_family.id, 'label': sub_family.sub_family_name} for sub_family in sub_families]
 
-        return Response(sub_families_data)
+        return Response(sub_families_list)
+
+    @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
+    def get_position_list(self, request):
+        positions = FamilyMember.POSITION_CHOICES
+        position_list = [{'value': value, 'label': label} for value, label in positions]
+        return Response(position_list)
 
         

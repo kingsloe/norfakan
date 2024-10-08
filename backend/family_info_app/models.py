@@ -42,11 +42,11 @@ class SubFamily(models.Model):
 class FamilyMember(models.Model):
 
     POSITION_CHOICES = [
-    ('head_of_super_family', 'Head of super family'),
-    ('head_of_sub_family', 'Head of sub family'),
-    ('head_of_committee', 'Head of committee'),
-    ('committee', 'Committee member'),
-    ('member', 'Member'),
+        ('head_of_super_family', 'Head of super family'),
+        ('head_of_sub_family', 'Head of sub family'),
+        ('head_of_committee', 'Head of committee'),
+        ('committee', 'Committee member'),
+        ('member', 'Member'),
     ]
 
     GENDER_CHOICES = [
