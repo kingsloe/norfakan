@@ -11,7 +11,7 @@ class SuperFamily(models.Model):
     super_family_head = models.OneToOneField(get_user_model(), on_delete=models.SET_NULL, null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)
-    family_key = models.CharField(max_length=7, editable=False, unique=True)
+    family_key = models.CharField(max_length=8, editable=False, unique=True)
 
 
     def __str__(self):
@@ -19,7 +19,7 @@ class SuperFamily(models.Model):
 
 def generate_family_key():
     while True:
-        key = ''.join(random.choices(string.ascii_letters + string.digits, k=7))
+        key = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
         if not SuperFamily.objects.filter(family_key=key).exists():
             return key
         
@@ -64,7 +64,7 @@ class FamilyMember(models.Model):
     sub_family = models.ForeignKey(SubFamily, on_delete=models.SET_NULL, related_name='family_members', null=True)
     position = models.CharField(max_length=200, choices=POSITION_CHOICES, default='member')
     status = models.CharField(max_length=200, choices=STATUS_CHOICES, default='alive')
-    gender = models.CharField(max_length=200, choices=GENDER_CHOICES)
+    gender = models.CharField(max_length=200, choices=GENDER_CHOICES, default='male')
     contact = models.CharField(max_length=200, default='0000000000')
     date_created = models.DateTimeField(auto_now_add=True)
     date_updated = models.DateTimeField(auto_now=True)

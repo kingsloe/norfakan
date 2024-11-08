@@ -15,15 +15,15 @@ const { height } = Dimensions.get('window');
 const SignIn = () => {
     const { setIsLoggedIn, loading, setLoading, isLoggedIn } = useAuth();
     const [form, setForm] = useState({
-        username: 'barbara74',
-        password: '1234'
+        username: 'superfamily1head',
+        family_key: 'jxwetyIm'
     });
 
     const submit = async () => {
         setLoading(true);
-        const { username, password } = form;
+        const { username, family_key } = form;
         try {
-            const result = await handleLogin(username, password)
+            const result = await handleLogin(username, family_key)
             setIsLoggedIn(true);
             if (result) router.replace('/home');
  
@@ -61,11 +61,11 @@ const SignIn = () => {
                         handleChangeText={(e) => setForm({ ...form, username: e})}
                     />
                     <FormField 
-                        title='Password'
+                        title='Family Key'
                         otherStyles={{marginTop: 20}}
-                        value= {form.password}
-                        placeholder='Enter Password'
-                        handleChangeText={(e) => setForm({ ...form, password: e})}
+                        value= {form.family_key}
+                        placeholder='Enter Family Key'
+                        handleChangeText={(e) => setForm({ ...form, family_key: e})}
                     />
                     
                     <View style={{

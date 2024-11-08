@@ -14,10 +14,10 @@ const FormField = ({title, handleChangeText, value, placeholder, otherStyles, ..
                 value={value}
                 placeholder={placeholder}
                 onChangeText={handleChangeText}
-                secureTextEntry={title === 'Password' && !showPassword}
+                secureTextEntry={title === 'Family Key' && !showPassword}
                 {...props}
             />
-            { title === 'Password' && (
+            { title === 'Family Key' && (
                 <TouchableOpacity
                     onPress={() => setShowPassword(!showPassword)}
                 >

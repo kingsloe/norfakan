@@ -14,6 +14,11 @@ class TakeFuneralFeeViewSet(viewsets.ModelViewSet):
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
 
+    def get_queryset(self):
+        family_member = get_object_or_404(FamilyMember, user=self.request.user)
+        user_super_family = family_member.sub_family.super_family
+        return FamilyMember.objects.filter(super_family=user_super_family)
+
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
     def get_total_funeral_fee(self, request):
         user = get_object_or_404(FamilyMember, user=self.request.user)

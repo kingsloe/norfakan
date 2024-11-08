@@ -18,8 +18,6 @@ const Profile = () => {
         try{
           await deleteData('accessToken');
           await deleteData('refreshToken');
-          await deleteData('familyMembersResult');
-          await deleteData('totalFuneralFeeResult');
           console.log('Successfully loggedout')
           setIsLoggedIn(false);
           router.replace('/')

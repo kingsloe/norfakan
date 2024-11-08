@@ -48,7 +48,6 @@ class FamilyMemberViewSet(viewsets.ModelViewSet):
         creator = request.user
         sub_families = SubFamily.objects.filter(creator=creator)
         sub_families_list = [{'value': sub_family.id, 'label': sub_family.sub_family_name} for sub_family in sub_families]
-
         return Response(sub_families_list)
 
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])

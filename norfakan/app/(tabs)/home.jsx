@@ -1,15 +1,12 @@
 import React from 'react';
 
-import { StyleSheet, View, Image, ScrollView, SectionList, Text } from 'react-native';
+import { StyleSheet, View, Image, SectionList, Text } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 import { images} from '../../constants';
-import { ENDPOINTS } from '../../constants/urls';
 import { Avatar, SearchInput, StatisticsCard, CustomButton} from '../../components';
-
-import axiosInstance from '../../lib/axiosInstance'
 
 import { router } from 'expo-router'
 

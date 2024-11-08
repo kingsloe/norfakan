@@ -18,7 +18,7 @@ export const ENDPOINTS = {
 
     getPositionListUrl: `${FAMILY_BASE_URL}/family-members/get_position_list/`,
 
-    getTotalFuneralFeeUrl: `${FUNERAL_BASE_URL}/funeral-info/get_funeral_info/`,
+    getFuneralInfoUrl: `${FUNERAL_BASE_URL}/funeral-info/get_funeral_info/`,
 
     getTotalFuneralFeeUrl: `${FEES_BASE_URL}/take-funeral-fee/get_total_funeral_fee/`,
 

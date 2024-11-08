@@ -32,7 +32,7 @@ const handleLogin  = async (username, password) => {
     } catch (error) {
         Alert.alert('Login Failed', 
             'Please check your credentials or Internet Connection')
-        console.log('Error Login in: ' + error)
+        console.log('Error Logging in: ' + error)
         throw error;
     } 
 }
@@ -52,6 +52,7 @@ const storeToken = async (key, value) => {
 const retrieveToken = async (key) => {
     try {
         let result = await SecureStore.getItemAsync(key);
+        console.log(`Successfuly retrieved ${key}`)
         return result;
     } catch (error) {
         console.log(`Error retrieving ${ key }: `, error)
