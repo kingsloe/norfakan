@@ -4,6 +4,7 @@ import { CustomButton, FormField, PickerField } from '../../components';
 import { ENDPOINTS } from '../../constants/urls';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import useFetchData from '../../hooks/useFetchData';
+import useAxios from '../../lib/axiosInstance';
 
 const { height } = Dimensions.get('window');
 
@@ -22,12 +23,15 @@ const AddFamilyMember = () => {
     const [positionList, setPositionList] = useState([]);
     const [statusList, setStatusList] = useState(STATUS);
     const [genderList, setGenderList] = useState(GENDER);
+    const axiosInstance = useAxios();
 
     const [form, setForm] = useState({
-        firstName: '',
-        lastName: '',
-        username: '',
-        password: '',
+        user : {
+            username: '',
+            password: '',
+            firstName: '',
+            lastName: '',
+        },
         subFamily: '',
         position: '',
         status: '',
@@ -49,7 +53,41 @@ const AddFamilyMember = () => {
     }, [getSubFamilyList, getPositionList]);
 
     const handleSubmit = async () => {
-        console.log(form);
+        const payload = {
+            user: {
+                username: form.username,
+                password: form.password,
+                firstname: form.firstName,
+                lastname: form.lastName,
+            },
+            sub_family: form.subFamily,
+            position: form.position,
+            status: form.status,
+            gender: form.gender,
+            contact: form.contact
+        }
+        try {
+            await axiosInstance.post(ENDPOINTS.getFamilyMembersUrl, payload);
+            setForm({
+                firstName: '',
+                lastName: '',
+                username: '',
+                password: '',
+                subFamily: '',
+                position: '',
+                status: '',
+                gender: '',
+                contact: '',
+            });
+        } catch (submitError) {
+            if (submitError.response) {
+                console.error('Failed to add Family Member', submitError.response.data);
+            } else if (submitError.request) {
+                console.error('No response from the server. Network issue or server is down.');
+            } else {
+                console.error('Error during request setup', submitError.message);
+            }
+        }
     };
 
     return (
@@ -78,7 +116,7 @@ const AddFamilyMember = () => {
                         handleChangeText={(e) => setForm({ ...form, username: e })}
                     />
                     <FormField 
-                        title='Password'
+                        title='Family Key'
                         otherStyles={{ marginTop: 20 }}
                         value={form.password}
                         placeholder='Enter Password'

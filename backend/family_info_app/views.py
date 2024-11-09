@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
 
 # Models import
 from .models import FamilyMember, SubFamily
@@ -21,8 +22,28 @@ class FamilyMemberViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         family_member = get_object_or_404(FamilyMember, user=self.request.user)
         user_sub_family = family_member.sub_family
-
         return FamilyMember.objects.filter(sub_family=user_sub_family)
+    
+    def perform_create(self, serializer):
+        user_data = self.request.data.get('user')
+        username = user_data.get('username')
+        password = user_data.get('password')
+        firstname = user_data.get('firstname')
+        lastname = user_data.get('lastname')
+
+        associated_user, created = get_user_model().objects.get_or_create(
+            username=username,
+            defaults={ 
+                'password': password,
+                'first_name': firstname, 
+                'last_name': lastname
+            }
+        )
+
+        if created:
+            associated_user.set_password(password)
+            associated_user.save()
+        serializer.save(creator=self.request.user, user=associated_user)
     
     # Custom endpoint for the number of family members to be shown on the homepage
     @action(detail=False, methods=['get'], permission_classes=[IsAuthenticated])
